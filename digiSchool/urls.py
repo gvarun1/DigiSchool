@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from digiSchool.loginApp import views as login_view
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls), path("signup/", login_view.signUpPage), path("signup/posted/", login_view.signUpPosted)
 
 ]
