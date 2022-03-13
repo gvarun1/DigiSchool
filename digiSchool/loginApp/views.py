@@ -42,10 +42,7 @@ def signUpPosted(request):
 
 
 def loginPage(request):
-	if len(request.GET) == 0:
-		templateto = Template(r'''<form action="/login/" method="GET"><input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
-		return HttpResponse(templateto.render(Context({})))
-	else:
+	if len(request.GET) == 2 and request.GET.get("uname", False) and request.GET.get("pswd", False):
 		Authentication = False
 		if request.POST or len(request.POST) > 0:
 			"""A Malicious user trying to change the method, to look for sec breach"""
@@ -73,3 +70,7 @@ def loginPage(request):
 			return HttpResponse("Redirect to profile page") # TBD.
 		else:
 			return HttpResponse("Enter Correct password") # Redirect to login page.
+	else:
+		# any other thing such as no GET parameters or malicious parameter will lead to login page.
+		templateto = Template(r'''<form action="/login/" method="GET"><input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
+		return HttpResponse(templateto.render(Context({})))
