@@ -42,13 +42,13 @@ def signUpPosted(request):
 
 
 def loginPage(request):
-	if len(request.GET) == 2 and request.GET.get("uname", False) and request.GET.get("pswd", False):
+	if len(request.POST) == 3 and request.POST.get("uname", False) and request.POST.get("pswd", False):
 		Authentication = False
-		if request.POST or len(request.POST) > 0:
+		if request.GET and len(request.GET) > 0:
 			"""A Malicious user trying to change the method, to look for sec breach"""
 			return HttpResponse('<body><meta http-equiv="refresh" content="0; url="http://127.0.0.1:8000/login/"/></body>')
 		
-		uInput = request.GET
+		uInput = request.POST
 		uname = uInput.get("uname", False)
 		passwd = uInput.get("pswd", False)
 
@@ -72,5 +72,6 @@ def loginPage(request):
 			return HttpResponse("Enter Correct password") # Redirect to login page.
 	else:
 		# any other thing such as no GET parameters or malicious parameter will lead to login page.
-		templateto = Template(r'''<form action="/login/" method="GET"><input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
-		return HttpResponse(templateto.render(Context({})))
+		csrf_token = csrf.get_token(request)
+		templateto = Template(r'''<form action="/login/" method="POST">{% csrf_token %}<input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
+		return HttpResponse(templateto.render(Context({"csrf_token":csrf_token})))
