@@ -13,7 +13,7 @@ def signUpPage(request):
 
 def signUpPosted(request):
 	# A security check
-	if request.GET:
+	if request.GET or len(request.GET) > 0:
 		"""A Malicious user trying to change the method, to look for sec breach"""
 		return HttpResponse('<body><meta http-equiv="refresh" content="0; url="http://127.0.0.1:8000/signup/"/></body>')
 	
@@ -22,9 +22,13 @@ def signUpPosted(request):
 	e_addr, contact = uInput.get("ea", False), uInput.get("cd", False)
 	cls_int, cls_sec = uInput.get("cl", False), uInput.get("cs", False)
 	s_name = uInput.get("sn", False)
-	passwd = uInput.get("pswd", False) # Hashed + Salted.
+	passwd = uInput.get("pswd", False) 
 	
-	if login_model.UserDB.objects.filter(email_addr=e_addr):
+	"""****************Passwd is passed through our hashing algorithm***********************************"""
+
+	# After this, the "passwd" contains a Hashed + Salted password.
+
+	if len(login_model.UserDB.objects.filter(email_addr=e_addr)) > 0:
 		return HttpResponse("<p>user already exists.</p>") # Create a redirect to login page.
 	try:
 		setting_user = login_model.UserDB(first_name = f_name, last_name = l_name, email_addr=e_addr, class_int=cls_int, class_section=cls_sec, school_name = s_name, contact_detail=contact, passwd=passwd)
@@ -34,3 +38,38 @@ def signUpPosted(request):
 	setting_user.save()
 
 	return HttpResponse(f"User {f_name} Succesfully created.")
+
+
+
+def loginPage(request):
+	if len(request.GET) == 0:
+		templateto = Template(r'''<form action="/login/" method="GET"><input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
+		return HttpResponse(templateto.render(Context({})))
+	else:
+		Authentication = False
+		if request.POST or len(request.POST) > 0:
+			"""A Malicious user trying to change the method, to look for sec breach"""
+			return HttpResponse('<body><meta http-equiv="refresh" content="0; url="http://127.0.0.1:8000/login/"/></body>')
+		
+		uInput = request.GET
+		uname = uInput.get("uname", False)
+		passwd = uInput.get("pswd", False)
+
+		if not uname or not passwd:
+			# Password or username is not given.
+			return HttpResponse("Please enter username and password.") # Create a redirect to login page.
+
+		"""****************Passwd is passed through our hashing algorithm***********************************"""
+
+		if len(login_model.UserDB.objects.filter(email_addr=uname)) == 0:
+			# User does not exist.
+			return HttpResponse("Please signup first.") # Create a redirect to signup page.
+		
+		usercheck = login_model.UserDB.objects.filter(email_addr=uname)
+		
+		if usercheck[0].passwd == passwd:
+			Authentication = True
+		if Authentication:
+			return HttpResponse("Redirect to profile page") # TBD.
+		else:
+			return HttpResponse("Enter Correct password") # Redirect to login page.
