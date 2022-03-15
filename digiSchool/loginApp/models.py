@@ -27,3 +27,4 @@ class UserDB(models.Model):
 	school_name = models.CharField(max_length=100)
 	contact_detail = models.CharField(max_length=10, validators=[is_a_number])
 	passwd = models.CharField(max_length=300) # Must be already hashed+salted at the user end itself (i.e. the data coming to us is already a hash value).
+	rollnumber = models.IntegerField(default=0)

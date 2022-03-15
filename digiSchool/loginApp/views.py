@@ -7,8 +7,9 @@ from django.middleware import csrf
 
 def signUpPage(request):
 	csrf_token = csrf.get_token(request)
-	templateto = Template(r'''<form action="/signup/posted/" method="POST">{% csrf_token %}<input type="text" name="fn"><input type="text" name="ln"><input type="text" name="ea"><input type="text" name="cd"><input type="text" name="cl"><input type="text" name="cs"><input type="text" name="sn"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
-	return HttpResponse(templateto.render(Context({"csrf_token":csrf_token})))
+	templateto = Template(r'''<form action="/signup/status/" method="POST">{% csrf_token %}<input type="text" name="fn"><input type="text" name="ln"><input type="text" name="ea"><input type="text" name="cd"><input type="text" name="cl"><input type="text" name="cs"><input type="text" name="sn"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
+	#return HttpResponse(templateto.render(Context({"csrf_token":csrf_token})))
+	return render(request, 'signup_page.html', {"csrf_token":csrf_token})
 
 
 def signUpPosted(request):
@@ -22,7 +23,8 @@ def signUpPosted(request):
 	e_addr, contact = uInput.get("ea", False), uInput.get("cd", False)
 	cls_int, cls_sec = uInput.get("cl", False), uInput.get("cs", False)
 	s_name = uInput.get("sn", False)
-	passwd = uInput.get("pswd", False) 
+	passwd = uInput.get("pswd", False)
+	rollnumber = uInput.get("rn", False)
 	
 	"""****************Passwd is passed through our hashing algorithm***********************************"""
 
@@ -31,10 +33,10 @@ def signUpPosted(request):
 	if len(login_model.UserDB.objects.filter(email_addr=e_addr)) > 0:
 		return HttpResponse("<p>user already exists.</p>") # Create a redirect to login page.
 	try:
-		setting_user = login_model.UserDB(first_name = f_name, last_name = l_name, email_addr=e_addr, class_int=cls_int, class_section=cls_sec, school_name = s_name, contact_detail=contact, passwd=passwd)
+		setting_user = login_model.UserDB(first_name = f_name, last_name = l_name, email_addr=e_addr, class_int=cls_int, class_section=cls_sec, school_name = s_name, contact_detail=contact, passwd=passwd, rollnumber=rollnumber)
 	except:
 		# Replace with the actual error page. and finallly return to the sign up page.
-		return HttpResponse('<p> Error in some data, please signup again.</p><meta http-equiv="refresh" content="0; url="http://127.0.0.1:8000/signup/"/>')
+		return HttpResponse('<p> Error in some data, please signup again.</p><meta http-equiv="refresh" content="1; url="http://127.0.0.1:8000/signup/"/>')
 	setting_user.save()
 
 	return HttpResponse(f"User {f_name} Succesfully created.")
@@ -73,5 +75,7 @@ def loginPage(request):
 	else:
 		# any other thing such as no GET parameters or malicious parameter will lead to login page.
 		csrf_token = csrf.get_token(request)
-		templateto = Template(r'''<form action="/login/" method="POST">{% csrf_token %}<input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Create"></form>''')
+		templateto = Template(r'''<form action="/login/" method="POST">{% csrf_token %}<input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Login"></form>''')
 		return HttpResponse(templateto.render(Context({"csrf_token":csrf_token})))
+
+		
