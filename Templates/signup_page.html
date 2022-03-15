@@ -46,6 +46,13 @@
 </head>
 
 <body>
+    {% if error_signing %}
+    <script>alert("There was an error while submission!! Retry after few minutes.")</script>
+    {% endif %}
+    {% if user_exist %}
+    <script>alert("User already exist! Please login.")</script>
+    <meta http-equiv="refresh" content="0; url='127.0.0.1:8000/login/'">
+    {% endif %}
     <div class="container-fluid">
         <div class="row tophead">
             <div class="col-sm-10">
