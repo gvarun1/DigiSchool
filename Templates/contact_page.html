@@ -29,6 +29,10 @@
 </head>
 
 <body>
+    {% if upload_error %}
+    <script>alert("There was some error!! Please try again later.")</script>
+    {% endif %}
+
     <div class="container-fluid">
         <div class="row tophead">
             <div class="col-sm-10">
@@ -36,23 +40,24 @@
             </div>
             <div class="col-lg-1">
                 <br>
-                <a href="127.0.0.1:8000/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Home</a>
+                <a href="/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Home</a>
             </div>
             <div class="col-lg-1">
                 <br>
-                <a href="127.0.0.1:8000/login/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Login</a>
+                <a href="/login/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Login</a>
             </div>
         </div>
         <br>
     </div>
     <h3 style="font-family: 'Trebuchet MS', sans-serif; text-align: center">This project was created for a semester-course CS253 provided by IIT Kanpur.</h3>
+    {% if not query_submitted %}
     <p style="font-family: 'Trebuchet MS', sans-serif; margin-left: 50px;"><br>For any query/bug, report us here, while pasting the uri which lead to the bug/query (if any).</p>
     <div class="container">
         <div class="row">
             <div class="col-lg-2">
             </div>
             <div class="col-lg-8">
-                <form action="127.0.0.1:8000/contact/submit" method="post">
+                <form action="/contact/submit/" method="post">
                     {% csrf_token %}
                     <input required="true" name="query_email"placeholder="Email address" type="text"  class="form-control" id="basic-url" aria-describedby="basic-addon3">
                     <br>
@@ -69,8 +74,8 @@
             </div>
         </div>
     </div>
-    
-
-    
+    {% else %}
+    <p style="font-family: 'Trebuchet MS', sans-serif; margin-left: 50px;"><br>Query is successfully submitted.</p>
+    {% endif %}
 </body>
 </html>

@@ -14,7 +14,7 @@ def signUpPage(request):
 def signUpPosted(request):
 	# Security check for method-interchange vaulnerablity: https://blog.nvisium.com/method-interchange-forgotten
 	if request.GET or len(request.GET) > 0:
-		return HttpResponse('<body><meta http-equiv="refresh" content="0; url="http://127.0.0.1:8000/signup/"/></body>')
+		return HttpResponse('<body><meta http-equiv="refresh" content="0; url="/signup/"/></body>')
 
 	csrf_token = csrf.get_token(request)
 	
@@ -39,43 +39,74 @@ def signUpPosted(request):
 
 	return render(request, 'signup_success.html')
 
-#-----------------------------------In-Progress View functions.-------------------------------------
-
 def contactPage(request):
 	csrf_token = csrf.get_token(request)
-	return render(request, 'contact_page.html', {"csrf_token":csrf_token})
+	return render(request, 'contact_page.html', {"csrf_token":csrf_token , "query_submitted": False, "upload_error": False})
 
 def loginPage(request):
+	csrf_token = csrf.get_token(request)
+	return render(request, "login_page.html", {"csrf_token":csrf_token, "error_login":False, "user_not_exist":False, "invalid_password":False})
+
+#-----------------------------------In-Progress View functions.-------------------------------------
+
+
+def homePage(request):
+	if request.POST:
+		return HttpResponse() # to replace with 404 not found.
+	return render(request, "home_page.html") # Home page html.
+
+def contactPageSubmitted(request):
+	if request.GET:
+		csrf_token = csrf.get_token(request)
+		return render(request, 'contact_page.html', {"csrf_token":csrf_token , "query_submitted": False, "upload_error": True})
+
+	csrf_token = csrf.get_token(request)
+	requestInput = request.POST
+	query_email = requestInput.get("query_email")
+	query_url = requestInput.get("query_url", None)
+	query_content = requestInput.get("query_description")
+
+	try:
+		setting_query = login_model.QueryStore(queryAddress = query_email, queryurl = query_url, queryContent = query_content)
+		setting_query.save()
+	except:
+		return render(request, 'contact_page.html', {"csrf_token":csrf_token , "query_submitted": False, "upload_error": True})
+
+	return render(request, 'contact_page.html', {"csrf_token":csrf_token , "query_submitted": True, "upload_error": False})
+
+
+def loginPageCheck(request):
+	if request.GET and len(request.GET) > 0:
+			return HttpResponse('<body><meta http-equiv="refresh" content="0; url="/login/"/></body>')
+	
 	if len(request.POST) == 3 and request.POST.get("uname", False) and request.POST.get("pswd", False):
 		Authentication = False
-		if request.GET and len(request.GET) > 0:
-			"""A Malicious user trying to change the method, to look for sec breach"""
-			return HttpResponse('<body><meta http-equiv="refresh" content="0; url="http://127.0.0.1:8000/login/"/></body>')
-		
+		csrf_token = csrf.get_token(request)
+
 		requestInput = request.POST
 		uname = requestInput.get("uname", False)
 		passwd = requestInput.get("pswd", False)
 
-		if not uname or not passwd:
-			# Password or username is not given.
-			return HttpResponse("Please enter username and password.") # Create a redirect to login page.
-
-		"""****************Passwd is passed through our hashing algorithm***********************************"""
+		if len(uname) == 0 or len(passwd) == 0:
+			# Password or username is not given maybe due to burpsuite inputs.
+			return render(request, "login_page.html", {"csrf_token":csrf_token, "error_login" : True, "user_not_exist": False, "invalid_password":False})
 
 		if len(login_model.UserDB.objects.filter(email_addr=uname)) == 0:
 			# User does not exist.
-			return HttpResponse("Please signup first.") # Create a redirect to signup page.
+			return render(request, "login_page.html", {"csrf_token":csrf_token, "error_login" : False, "user_not_exist": True, "invalid_password":False})
 		
+
+		"""****************Passwd is passed through our hashing algorithm***********************************"""
+
 		usercheck = login_model.UserDB.objects.filter(email_addr=uname)
 		
 		if usercheck[0].passwd == passwd:
 			Authentication = True
+
+		# Get user profile id or something and then use this id as a template variable to render things.
 		if Authentication:
 			return HttpResponse("Redirect to profile page") # TBD.
 		else:
-			return HttpResponse("Enter Correct password") # Redirect to login page.
-	else:
-		# any other thing such as no GET parameters or malicious parameter will lead to login page.
-		csrf_token = csrf.get_token(request)
-		templateto = Template(r'''<form action="/login/" method="POST">{% csrf_token %}<input type="text" name="uname"><input type="text" name="pswd"><input type="submit" value="Login"></form>''')
-		return HttpResponse(templateto.render(Context({"csrf_token":csrf_token})))
+			return render(request, "login_page.html", {"csrf_token":csrf_token, "error_login" : False, "user_not_exist": False, "invalid_password": True})
+		
+	return render(request, "login_page.html", {"csrf_token":csrf_token, "error_login" : True, "user_not_exist": False, "invalid_password":False})

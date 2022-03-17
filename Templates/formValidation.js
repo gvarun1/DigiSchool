@@ -185,7 +185,7 @@ function final_validation()
         document.forms["signupform"]["ea"].value = document.forms["signupform"]["ea"].value.toLowerCase()
         return true;
     }
-    alert("Some or more details are invalid. Please enter again!")
+    alert("One or more details are invalid. Please enter again!")
     return false;
     
     

@@ -18,7 +18,7 @@ from django.urls import path, include
 from digiSchool.loginApp import views as login_view
 urlpatterns = [
     path('admin/', admin.site.urls), path("signup/", login_view.signUpPage),
-    path("signup/status/", login_view.signUpPosted), path("login/", login_view.loginPage),
-    path("contact/", login_view.contactPage)
-
+    path("signup/status/", login_view.signUpPosted), path("login/", login_view.loginPage), path("login/check/", login_view.loginPageCheck),
+    path("contact/", login_view.contactPage), path("contact/submit/", login_view.contactPageSubmitted),
+    path("", login_view.homePage) # keep this in last.
 ]

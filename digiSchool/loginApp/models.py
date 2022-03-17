@@ -28,3 +28,10 @@ class UserDB(models.Model):
 	contact_detail = models.CharField(max_length=10, validators=[is_a_number])
 	passwd = models.CharField(max_length=300) # Must be already hashed+salted at the user end itself (i.e. the data coming to us is already a hash value).
 	rollnumber = models.IntegerField(default=0)
+
+class QueryStore(models.Model):
+	datestamp = models.DateTimeField(auto_now_add=True)
+	queryAddress = models.EmailField()
+	queryurl = models.CharField(default=None, max_length=100)
+	queryContent = models.CharField(max_length=500)
+	resolve_status = models.BooleanField(default=False)

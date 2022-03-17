@@ -51,7 +51,7 @@
     {% endif %}
     {% if user_exist %}
     <script>alert("User already exist! Please login.")</script>
-    <meta http-equiv="refresh" content="0; url='127.0.0.1:8000/login/'">
+    <meta http-equiv="refresh" content="0; url='/login/'">
     {% endif %}
     <div class="container-fluid">
         <div class="row tophead">
@@ -60,11 +60,11 @@
             </div>
             <div class="col-lg-1">
                 <br>
-                <a href="127.0.0.1:8000/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Home</a>
+                <a href="/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Home</a>
             </div>
             <div class="col-lg-1">
                 <br>
-                <a href="127.0.0.1:8000/contact/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Contact Us</a>
+                <a href="/contact/" style="font-size:large; font-family: 'Trebuchet MS', sans-serif;">Contact Us</a>
             </div>
         </div>
         <br>
@@ -92,7 +92,7 @@
                         <p style="text-align:center">DigiSchool comes with <span style="font-style: italic; font-weight: bold;">student analytics</span>, which helps them and their parents<br> to better understand about their grasp on the courses.</p>
                     </div>
                 </div>
-                <p style="display: inline;">Already a user?&nbsp;</p><a href="127.0.0.1:8000/login">Login</a>
+                <p style="display: inline;">Already a user?&nbsp;</p><a href="/login">Login</a> <!--need to move this out from this row and place down to new row!! (do the same for all files containing same format.)-->
             </div>
             <div class="col-lg-8">
                 <p style="font-family: 'Trebuchet MS', sans-serif;">Enter your registration details here.</p>
