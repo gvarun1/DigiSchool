@@ -183,6 +183,7 @@ function final_validation()
         document.forms["signupform"]["cs"].value = document.forms["signupform"]["cs"].value.toUpperCase()
         document.forms["signupform"]["sn"].value = document.forms["signupform"]["sn"].value.toUpperCase()
         document.forms["signupform"]["ea"].value = document.forms["signupform"]["ea"].value.toLowerCase()
+        return true;
     }
     alert("One or more details are invalid. Please enter again!")
     return false;
