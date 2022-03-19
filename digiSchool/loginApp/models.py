@@ -28,6 +28,7 @@ class UserDB(models.Model):
 	contact_detail = models.CharField(max_length=10, validators=[is_a_number])
 	passwd = models.CharField(max_length=300) # Must be already hashed+salted at the user end itself (i.e. the data coming to us is already a hash value).
 	rollnumber = models.IntegerField(default=0)
+	category = models.CharField(max_length=1)
 
 class QueryStore(models.Model):
 	datestamp = models.DateTimeField(auto_now_add=True)
